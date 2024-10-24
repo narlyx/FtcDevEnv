@@ -11,7 +11,7 @@ public class Configuration {
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
 
-  public HardwareMap(LinearOpMode opMode) {
+  public Configuration(LinearOpMode opMode) {
     this.opMode = opMode;
   }
 
