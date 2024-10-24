@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Configuration;
 
@@ -13,6 +14,8 @@ public class MainTeleop extends LinearOpMode {
   public void runOpMode() {
     robot.init();
 
+    setBreaking(true);
+
     waitForStart();
 
     while (opModeIsActive()) {
@@ -20,7 +23,6 @@ public class MainTeleop extends LinearOpMode {
       double lateralControl = gamepad1.left_stick_x;
       double yawControl = gamepad1.right_stick_x;
       double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
-      double breakControl = gamepad2.left_trigger;
 
       setMovementPower(axialControl, lateralControl, yawControl, throttleControl);
     }
@@ -35,5 +37,19 @@ public class MainTeleop extends LinearOpMode {
     robot.FR.setPower(frontRightPower);
     robot.BL.setPower(backLeftPower);
     robot.BR.setPower(backRightPower);
+  }
+
+  public void setBreaking(boolean choice) {
+    if (choice) {
+      robot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      robot.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      robot.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+      robot.BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    } else {
+      robot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      robot.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      robot.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      robot.BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
   }
 }
