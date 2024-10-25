@@ -82,7 +82,7 @@ public class Configuration {
             .setMiddleEncoderOffset(0)
 
             .setTicksPerEncoderRotation(2000)
-            .setEncoderWheelRadius(1.25984)
+            .setEncoderWheelRadius(1.25984/2)
 
             // Software config
             .setMinSpeed(0.2)
