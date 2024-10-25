@@ -79,20 +79,20 @@ public class Configuration {
             .flipMiddleEncoder(false)
 
             .setSideEncoderDistance(6.625)
-            .setMiddleEncoderOffset(0)
+            .setMiddleEncoderOffset(-.1)
 
             .setTicksPerEncoderRotation(2000)
             .setEncoderWheelRadius(1.25984/2)
 
             // Software config
             .setMinSpeed(0.2)
-            .setMaxSpeed(0.5)
+            .setMaxSpeed(0.75)
             .setStartSpeed(0.4)
-            .setSpeedModifier(0.04)
+            .setSpeedModifier(0.025)
             .setStopForceSpeed(0.1)
-            .setCorrectionOverpowerDistance(5)
-            .setDistanceBuffer(1)
-            .setRotationBuffer(5)
+            .setCorrectionOverpowerDistance(2)
+            .setDistanceBuffer(.25)
+            .setRotationBuffer(.1)
 
             .build();
   }

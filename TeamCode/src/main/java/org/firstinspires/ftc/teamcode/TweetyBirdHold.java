@@ -24,6 +24,8 @@ public class TweetyBirdHold extends LinearOpMode {
             telemetry.addData("Z",robot.tweetyBird.getZ());
             telemetry.update();
         }
+
+        robot.tweetyBird.stop();
     }
 
 }
