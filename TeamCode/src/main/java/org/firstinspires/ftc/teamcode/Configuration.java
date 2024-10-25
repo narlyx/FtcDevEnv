@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import dev.narlyx.ftc.tweetybird.TweetyBirdProcessor;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,6 +11,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 public class Configuration {
   private LinearOpMode opMode;
   private HardwareMap hwMap;
+
+  public TweetyBirdProcessor tweetyBird;
 
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
@@ -53,6 +57,44 @@ public class Configuration {
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     )));*/
 
+  }
+
+  public void initTweetyBird() {
+    tweetyBird = new TweetyBirdProcessor.Builder()
+            // Setting opmode
+            .setOpMode(opMode)
+
+            // Hardware config
+            .setFrontLeftMotor(FL)
+            .setBackLeftMotor(BL)
+            .setFrontRightMotor(FR)
+            .setBackRightMotor(BR)
+
+            .setLeftEncoder(leftEncoder)
+            .setRightEncoder(rightEncoder)
+            .setMiddleEncoder(centerEncoder)
+
+            .flipLeftEncoder(true)
+            .flipRightEncoder(false)
+            .flipMiddleEncoder(false)
+
+            .setSideEncoderDistance(6.625)
+            .setMiddleEncoderOffset(0)
+
+            .setTicksPerEncoderRotation(2000)
+            .setEncoderWheelRadius(1.25984)
+
+            // Software config
+            .setMinSpeed(0.2)
+            .setMaxSpeed(0.5)
+            .setStartSpeed(0.4)
+            .setSpeedModifier(0.04)
+            .setStopForceSpeed(0.1)
+            .setCorrectionOverpowerDistance(5)
+            .setDistanceBuffer(1)
+            .setRotationBuffer(5)
+
+            .build();
   }
 
 }
