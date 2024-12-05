@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import dev.narlyx.ftc.tweetybird.TweetyBirdProcessor;
+import dev.narlyx.tweetybird.Odometers.ThreeWheeled;
+import dev.narlyx.tweetybird.Drivers.Mecanum;
+import dev.narlyx.tweetybird.TweetyBird;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,7 +13,9 @@ public class Configuration {
   private LinearOpMode opMode;
   private HardwareMap hwMap;
 
-  public TweetyBirdProcessor tweetyBird;
+  public TweetyBird tweetyBird;
+  public ThreeWheeled odometer;
+  public Mecanum driver;
 
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
@@ -57,44 +60,37 @@ public class Configuration {
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     )));*/
 
+    odometer = new ThreeWheeled.Builder()
+        .setLeftEncoder(leftEncoder)
+        .setFlipLeftEncoder(false)
+        .setFlipRightEncoder(true)
+        .setFlipMiddleEncoder(true)
+        .setRightEncoder(rightEncoder)
+        .setMiddleEncoder(centerEncoder)
+        .setSideEncoderDistance(6.625)
+        .setMiddleEncoderOffset(-.1)
+        .setEncoderTicksPerRotation(2000)
+        .setEncoderWheelRadius(1.25984/2)
+        .build();
+    driver = new Mecanum.Builder()
+        .setFrontLeftMotor(FL)
+        .setFrontRightMotor(FR)
+        .setBackLeftMotor(BL)
+        .setBackRightMotor(BR)
+        .build();
   }
 
   public void initTweetyBird() {
-    tweetyBird = new TweetyBirdProcessor.Builder()
-            // Setting opmode
-            .setOpMode(opMode)
-
-            // Hardware config
-            .setFrontLeftMotor(FL)
-            .setBackLeftMotor(BL)
-            .setFrontRightMotor(FR)
-            .setBackRightMotor(BR)
-
-            .setLeftEncoder(leftEncoder)
-            .setRightEncoder(rightEncoder)
-            .setMiddleEncoder(centerEncoder)
-
-            .flipLeftEncoder(true)
-            .flipRightEncoder(false)
-            .flipMiddleEncoder(false)
-
-            .setSideEncoderDistance(6.625)
-            .setMiddleEncoderOffset(-.1)
-
-            .setTicksPerEncoderRotation(2000)
-            .setEncoderWheelRadius(1.25984/2)
-
-            // Software config
-            .setMinSpeed(0.2)
-            .setMaxSpeed(0.75)
-            .setStartSpeed(0.4)
-            .setSpeedModifier(0.025)
-            .setStopForceSpeed(0.1)
-            .setCorrectionOverpowerDistance(2)
-            .setDistanceBuffer(.25)
-            .setRotationBuffer(.1)
-
-            .build();
+    tweetyBird = new TweetyBird.Builder()
+        .setLinearOpMode(opMode)
+        .setOdometer(odometer)
+        .setDriver(driver)
+        .setMaximumSpeed(.8)
+        .setMinimumSpeed(.2)
+        .setDistanceBuffer(1)
+        .setRotationBuffer(1)
+        .setDebuggingEnabled(true)
+        .build();
   }
 
 }

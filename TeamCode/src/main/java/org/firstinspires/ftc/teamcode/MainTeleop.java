@@ -20,13 +20,6 @@ public class MainTeleop extends LinearOpMode {
   public void runOpMode() {
     // Starting robot
     robot.init();
-    robot.initTweetyBird();
-
-    // Disengaging TweetyBird
-    robot.tweetyBird.disengage();
-
-    // Disabling motor "floating"
-    setBreaking(true);
 
     // Waiting for drivers to start
     telemetry.addLine("Robot is ready");
@@ -44,13 +37,13 @@ public class MainTeleop extends LinearOpMode {
 
       // Field centric yaw reset
       if (fcdReset) {
-        robot.tweetyBird.resetTo(robot.tweetyBird.getX(),robot.tweetyBird.getY(),0);
+        robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
       }
 
       // Field centric calculations
       double gamepadRad = Math.atan2(lateralControl, axialControl);
       double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
-      double robotRadians = robot.tweetyBird.getZ();
+      double robotRadians = robot.odometer.getZ();
       double targetRad = gamepadRad - robotRadians;
       double axial = Math.cos(targetRad)*gamepadHypot;
       double lateral = Math.sin(targetRad)*gamepadHypot;
@@ -59,11 +52,12 @@ public class MainTeleop extends LinearOpMode {
       setMovementPower(axial, lateral, yawControl, throttleControl);
 
       // Telemetry
-      telemetry.addData("Z",robot.tweetyBird.getZ());
+      telemetry.addData("Z",robot.odometer.getZ());
+      telemetry.addData("Left Encoder",robot.leftEncoder.getCurrentPosition());
+      telemetry.addData("Right Encoder",robot.rightEncoder.getCurrentPosition());
+      telemetry.addData("Middle Encoder",robot.centerEncoder.getCurrentPosition());
       telemetry.update();
     }
-
-    robot.tweetyBird.stop();
   }
 
   /**
@@ -74,6 +68,12 @@ public class MainTeleop extends LinearOpMode {
    * @param speed
    */
   public void setMovementPower(double axial, double lateral, double yaw, double speed) {
+    if (axial == 0 && lateral == 0 && yaw == 0) {
+      setBreaking(true);
+    } else {
+      setBreaking(false);
+    }
+
     double frontLeftPower  = ((axial + lateral + yaw) * speed);
     double frontRightPower = ((axial - lateral - yaw) * speed);
     double backLeftPower   = ((axial - lateral + yaw) * speed);
