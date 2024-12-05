@@ -85,7 +85,7 @@ public class Configuration {
         .setLinearOpMode(opMode)
         .setOdometer(odometer)
         .setDriver(driver)
-        .setMaximumSpeed(.8)
+        .setMaximumSpeed(.9)
         .setMinimumSpeed(.2)
         .setDistanceBuffer(1)
         .setRotationBuffer(1)

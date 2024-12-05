@@ -52,10 +52,9 @@ public class MainTeleop extends LinearOpMode {
       setMovementPower(axial, lateral, yawControl, throttleControl);
 
       // Telemetry
+      telemetry.addData("X",robot.odometer.getX());
+      telemetry.addData("Y",robot.odometer.getY());
       telemetry.addData("Z",robot.odometer.getZ());
-      telemetry.addData("Left Encoder",robot.leftEncoder.getCurrentPosition());
-      telemetry.addData("Right Encoder",robot.rightEncoder.getCurrentPosition());
-      telemetry.addData("Middle Encoder",robot.centerEncoder.getCurrentPosition());
       telemetry.update();
     }
   }
