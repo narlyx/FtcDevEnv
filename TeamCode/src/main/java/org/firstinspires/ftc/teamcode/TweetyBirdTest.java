@@ -17,7 +17,7 @@ public class TweetyBirdTest extends LinearOpMode {
         waitForStart();
 
         robot.tweetyBird.sendTargetPosition(0,10,0);
-        robot.tweetyBird.sendTargetPosition(0,64,179);
+        robot.tweetyBird.sendTargetPosition(0,64,180);
 
 
         while (opModeIsActive()) {

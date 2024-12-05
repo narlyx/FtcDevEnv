@@ -89,7 +89,7 @@ public class Configuration {
         .setMinimumSpeed(.2)
         .setDistanceBuffer(1)
         .setRotationBuffer(1)
-        .setDebuggingEnabled(true)
+        .setDebuggingEnabled(false)
         .build();
   }
 
