@@ -5,6 +5,7 @@ import dev.narlyx.tweetybird.Drivers.Mecanum;
 import dev.narlyx.tweetybird.TweetyBird;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -39,19 +40,19 @@ public class Configuration {
 
     FL = hwMap.get(DcMotor.class, "FL");
     FL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    FL.setDirection(DcMotor.Direction.FORWARD);
+    FL.setDirection(DcMotor.Direction.REVERSE);
 
     FR = hwMap.get(DcMotor.class, "FR");
     FR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    FR.setDirection(DcMotor.Direction.REVERSE);
+    FR.setDirection(DcMotor.Direction.FORWARD);
 
     BL = hwMap.get(DcMotor.class, "BL");
     BL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    BL.setDirection(DcMotor.Direction.FORWARD);
+    BL.setDirection(DcMotor.Direction.REVERSE);
 
     BR = hwMap.get(DcMotor.class, "BR");
     BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    BR.setDirection(DcMotor.Direction.REVERSE);
+    BR.setDirection(DcMotor.Direction.FORWARD);
 
     /*
     imu = hwMap.get(IMU.class, "imu");
@@ -85,11 +86,12 @@ public class Configuration {
         .setLinearOpMode(opMode)
         .setOdometer(odometer)
         .setDriver(driver)
-        .setMaximumSpeed(.9)
-        .setMinimumSpeed(.2)
+        .setMaximumSpeed(1)
+        .setMinimumSpeed(.3)
         .setDistanceBuffer(1)
-        .setRotationBuffer(1)
+        .setRotationBuffer(2)
         .setDebuggingEnabled(false)
+        .setLoggingEnabled(true)
         .build();
   }
 
