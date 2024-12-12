@@ -4,11 +4,13 @@ import dev.narlyx.tweetybird.Odometers.ThreeWheeled;
 import dev.narlyx.tweetybird.Drivers.Mecanum;
 import dev.narlyx.tweetybird.TweetyBird;
 
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.SensorHuskyLens;
 
 public class Configuration {
   private LinearOpMode opMode;
@@ -21,6 +23,8 @@ public class Configuration {
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
   public IMU imu;
+
+  public HuskyLens huskyLens;
 
   public Configuration(LinearOpMode opMode) {
     this.opMode = opMode;
@@ -61,6 +65,8 @@ public class Configuration {
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     )));*/
 
+    huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+
     odometer = new ThreeWheeled.Builder()
         .setLeftEncoder(leftEncoder)
         .setFlipLeftEncoder(false)
@@ -73,6 +79,7 @@ public class Configuration {
         .setEncoderTicksPerRotation(2000)
         .setEncoderWheelRadius(1.25984/2)
         .build();
+
     driver = new Mecanum.Builder()
         .setFrontLeftMotor(FL)
         .setFrontRightMotor(FR)
