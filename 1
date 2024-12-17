@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.Range;
 @TeleOp(name = "Main Teleop")
 public class MainTeleop extends LinearOpMode {
   // Loading robot configuration
-  private final Configuration robot = new Configuration(this);
+  private Configuration robot = new Configuration(this);
 
   /**
    * Runtime
@@ -55,18 +55,7 @@ public class MainTeleop extends LinearOpMode {
       setMovementPower(axial, lateral, yawControl, throttleControl);
 
       // Extend
-      if (extendControl != 0) {
-        if (robot.extendMotor.getMode() != DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
-          robot.extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-        robot.extendMotor.setPower(extendControl);
-      } else {
-        if (robot.extendMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
-          robot.extendMotor.setTargetPosition(robot.extendMotor.getCurrentPosition());
-          robot.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-          robot.extendMotor.setPower(1);
-        }
-      }
+      robot.extendMotor.setPower(extendControl);
 
       // Telemetry
       telemetry.addData("X",robot.odometer.getX());
@@ -76,8 +65,19 @@ public class MainTeleop extends LinearOpMode {
     }
   }
 
+  /**
+   * Dynamically powers all four motors
+   * @param axial
+   * @param lateral
+   * @param yaw
+   * @param speed
+   */
   public void setMovementPower(double axial, double lateral, double yaw, double speed) {
-    setBreaking(axial == 0 && lateral == 0 && yaw == 0);
+    if (axial == 0 && lateral == 0 && yaw == 0) {
+      setBreaking(true);
+    } else {
+      setBreaking(false);
+    }
 
     double frontLeftPower  = ((axial + lateral + yaw) * speed);
     double frontRightPower = ((axial - lateral - yaw) * speed);
@@ -89,6 +89,10 @@ public class MainTeleop extends LinearOpMode {
     robot.BR.setPower(backRightPower);
   }
 
+  /**
+   * Toggles zero power breaking for all four motors
+   * @param choice
+   */
   public void setBreaking(boolean choice) {
     if (choice) {
       robot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

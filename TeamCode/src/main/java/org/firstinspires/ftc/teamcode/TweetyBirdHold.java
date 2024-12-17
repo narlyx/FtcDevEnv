@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "TweetyBird Hold Position", group = "2")
 public class TweetyBirdHold extends LinearOpMode {
-    private Configuration robot = new Configuration(this);
+    private final Configuration robot = new Configuration(this);
 
     @Override
     public void runOpMode() {
@@ -16,8 +16,7 @@ public class TweetyBirdHold extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        while (opModeIsActive()) {
-        }
+        while (opModeIsActive());
         robot.tweetyBird.close();
     }
 

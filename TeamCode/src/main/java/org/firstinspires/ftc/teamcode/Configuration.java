@@ -6,6 +6,7 @@ import dev.narlyx.tweetybird.TweetyBird;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -22,6 +23,7 @@ public class Configuration {
 
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
+  public DcMotor extendMotor;
   public IMU imu;
 
   public HuskyLens huskyLens;
@@ -57,6 +59,10 @@ public class Configuration {
     BR = hwMap.get(DcMotor.class, "BR");
     BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     BR.setDirection(DcMotor.Direction.FORWARD);
+
+    extendMotor = hwMap.get(DcMotor.class, "ExtendMotor");
+    extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    extendMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
     /*
     imu = hwMap.get(IMU.class, "imu");
