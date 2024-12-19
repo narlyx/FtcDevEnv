@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.POC;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "TweetyBird Test",group = "1")
+import org.firstinspires.ftc.teamcode.Configuration;
+
+@Autonomous(name = "TweetyBird Test",group = "poc")
 public class TweetyBirdTest extends LinearOpMode {
     private final Configuration robot = new Configuration(this);
 
