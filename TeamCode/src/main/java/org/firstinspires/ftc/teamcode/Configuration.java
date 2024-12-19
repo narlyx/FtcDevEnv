@@ -13,28 +13,46 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorHuskyLens;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 public class Configuration {
+  // Classes
   private LinearOpMode opMode;
   private HardwareMap hwMap;
 
+  // Var
+  public enum sampleColors {YELLOW,BLUE,RED};
+  public Dictionary<Integer, sampleColors> sampleIds;
+
+  // TweetyBird
   public TweetyBird tweetyBird;
   public ThreeWheeled odometer;
   public Mecanum driver;
 
+  // Hardware
   public DcMotor FL, FR, BL, BR;
   public DcMotor leftEncoder, rightEncoder, centerEncoder;
-  public DcMotor extendMotor;
   public IMU imu;
-
   public HuskyLens huskyLens;
 
+  // Constructor
   public Configuration(LinearOpMode opMode) {
     this.opMode = opMode;
   }
 
+  // General initialization
   public void init() {
+    // Setting classes
     hwMap = opMode.hardwareMap;
 
+    // Setting vars
+    sampleIds = new Hashtable<>();
+    sampleIds.put(1,sampleColors.YELLOW);
+    sampleIds.put(2,sampleColors.RED);
+    sampleIds.put(3,sampleColors.BLUE);
+
+    // Setting hardware
     leftEncoder = hwMap.get(DcMotor.class, "FL");
     leftEncoder.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -60,10 +78,6 @@ public class Configuration {
     BR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     BR.setDirection(DcMotor.Direction.FORWARD);
 
-    extendMotor = hwMap.get(DcMotor.class, "ExtendMotor");
-    extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    extendMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
     /*
     imu = hwMap.get(IMU.class, "imu");
     imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -73,6 +87,7 @@ public class Configuration {
 
     huskyLens = hwMap.get(HuskyLens.class, "huskylens");
 
+    // TweetyBird classes
     odometer = new ThreeWheeled.Builder()
         .setLeftEncoder(leftEncoder)
         .setFlipLeftEncoder(false)
@@ -94,6 +109,7 @@ public class Configuration {
         .build();
   }
 
+  // TweetyBird initialization
   public void initTweetyBird() {
     tweetyBird = new TweetyBird.Builder()
         .setLinearOpMode(opMode)

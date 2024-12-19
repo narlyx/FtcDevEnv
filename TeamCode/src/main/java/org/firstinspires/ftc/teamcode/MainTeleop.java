@@ -35,9 +35,6 @@ public class MainTeleop extends LinearOpMode {
       double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
       boolean fcdReset = gamepad1.left_bumper;
 
-      // Controls for gamepad 2
-      double extendControl = -gamepad2.right_stick_y;
-
       // Field centric yaw reset
       if (fcdReset) {
         robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
@@ -53,20 +50,6 @@ public class MainTeleop extends LinearOpMode {
 
       // Setting motor powers
       setMovementPower(axial, lateral, yawControl, throttleControl);
-
-      // Extend
-      if (extendControl != 0) {
-        if (robot.extendMotor.getMode() != DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
-          robot.extendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-        robot.extendMotor.setPower(extendControl);
-      } else {
-        if (robot.extendMotor.getMode() != DcMotor.RunMode.RUN_TO_POSITION) {
-          robot.extendMotor.setTargetPosition(robot.extendMotor.getCurrentPosition());
-          robot.extendMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-          robot.extendMotor.setPower(1);
-        }
-      }
 
       // Telemetry
       telemetry.addData("X",robot.odometer.getX());
