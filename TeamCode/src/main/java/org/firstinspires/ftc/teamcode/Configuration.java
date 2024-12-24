@@ -119,7 +119,7 @@ public class Configuration {
         .setMinimumSpeed(.3)
         .setDistanceBuffer(1)
         .setRotationBuffer(2)
-        .setSpeedModifier(0.035)
+        .setSpeedModifier(0.04)
         .setDebuggingEnabled(false)
         .setLoggingEnabled(true)
         .build();
