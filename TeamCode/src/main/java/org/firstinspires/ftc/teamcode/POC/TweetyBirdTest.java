@@ -77,13 +77,8 @@ public class TweetyBirdTest extends LinearOpMode {
         robot.tweetyBird.close();
     }
 
-    private int count = 0;
     private void waitDebug() {
-        count++;
-        telemetry.addLine("Waiting "+count);
-        telemetry.update();
-        robot.tweetyBird.waitWhileBusy();
-        telemetry.clearAll();
+        while (robot.tweetyBird.isBusy() && opModeIsActive());
     }
 
 }
