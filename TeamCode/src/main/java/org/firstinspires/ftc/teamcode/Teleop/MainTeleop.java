@@ -15,61 +15,86 @@ public class MainTeleop extends LinearOpMode {
   // Loading robot configuration
   private final Configuration robot = new Configuration(this);
 
+  // Public vars
+  public double pullRad = 0, pullStrength = 0;
+
   /**
    * Runtime
    */
   @Override
   public void runOpMode() {
+
+    // Class for operations on gamepad 1
+    class Gamepad1 extends Thread {
+      @Override
+      public void run() {
+        // Controls
+        double axialControl = -gamepad1.left_stick_y;
+        double lateralControl = gamepad1.left_stick_x;
+        double yawControl = gamepad1.right_stick_x;
+        double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
+        boolean fcdReset = gamepad1.left_bumper;
+
+        // Field centric yaw reset
+        if (fcdReset) {
+          robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
+        }
+
+        // Field centric calculations
+        double gamepadRad = Math.atan2(lateralControl, axialControl);
+        double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
+        double robotRadians = robot.odometer.getZ();
+        double targetRad = gamepadRad - robotRadians;
+
+        // Combining pull
+        double finalRad = targetRad-(((Math.abs(targetRad-pullRad))*(targetRad/Math.abs(targetRad)))*pullStrength);
+
+        // Final calculations
+        double axial = Math.cos(finalRad)*gamepadHypot;
+        double lateral = Math.sin(finalRad)*gamepadHypot;
+
+        // Sending movement to drivetrain
+        setMovementPower(axial, lateral, yawControl, throttleControl);
+      }
+    }
+
+    // Class for operations on gamepad 2
+    class Gamepad2 extends Thread {
+      @Override
+      public void run() {
+        // Controls
+        double axialPullControl = -gamepad2.left_stick_y;
+        double lateralPullControl = -gamepad2.left_stick_x;
+
+        pullRad = Math.atan2(lateralPullControl, axialPullControl);
+        pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
+
+      }
+    }
+
     // Starting robot
     robot.init();
+
+    // Creating threads
+    Gamepad1 thread1 = new Gamepad1();
+    Gamepad2 thread2 = new Gamepad2();
 
     // Waiting for drivers to start
     telemetry.addLine("Robot is ready");
     telemetry.update();
     waitForStart();
 
-    // Runtime loop
+    // Starting threads
+    thread1.start();
+    thread2.start();
+
+    // Operations separate from both threads
     while (opModeIsActive()) {
-      // Controls for gamepad 1
-      double axialControl = -gamepad1.left_stick_y;
-      double lateralControl = gamepad1.left_stick_x;
-      double yawControl = gamepad1.right_stick_x;
-      double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
-      boolean fcdReset = gamepad1.left_bumper;
-
-      // Controls for gamepad 2
-      double axialPullControl = -gamepad2.left_stick_y;
-      double lateralPullControl = -gamepad2.left_stick_x;
-
-      // Field centric yaw reset
-      if (fcdReset) {
-        robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
-      }
-
-      // Field centric calculations
-      double gamepadRad = Math.atan2(lateralControl, axialControl);
-      double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
-      double robotRadians = robot.odometer.getZ();
-      double targetRad = gamepadRad - robotRadians;
-
-      // Pull via controller
-      double pullRad = Math.atan2(lateralPullControl, axialPullControl);
-      double pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
-
-      // Finalized calculations
-      double finalRad = targetRad-(((Math.abs(targetRad-pullRad))*(targetRad/Math.abs(targetRad)))*pullStrength);
-      double axial = Math.cos(finalRad)*gamepadHypot;
-      double lateral = Math.sin(finalRad)*gamepadHypot;
-
-      // Setting motor powers
-      setMovementPower(axial, lateral, yawControl, throttleControl);
-
-      // Telemetry
-      telemetry.addData("X",robot.odometer.getX());
-      telemetry.addData("Y",robot.odometer.getY());
-      telemetry.addData("Z",robot.odometer.getZ());
-      telemetry.update();
     }
+
+    // Shutting down
+    thread1.interrupt();
+    thread2.interrupt();
   }
 
   public void setMovementPower(double axial, double lateral, double yaw, double speed) {
