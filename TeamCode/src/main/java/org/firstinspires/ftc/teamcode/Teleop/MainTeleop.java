@@ -37,6 +37,10 @@ public class MainTeleop extends LinearOpMode {
       double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
       boolean fcdReset = gamepad1.left_bumper;
 
+      // Controls for gamepad 2
+      double axialPullControl = -gamepad2.left_stick_y;
+      double lateralPullControl = -gamepad2.left_stick_x;
+
       // Field centric yaw reset
       if (fcdReset) {
         robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
@@ -47,8 +51,15 @@ public class MainTeleop extends LinearOpMode {
       double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
       double robotRadians = robot.odometer.getZ();
       double targetRad = gamepadRad - robotRadians;
-      double axial = Math.cos(targetRad)*gamepadHypot;
-      double lateral = Math.sin(targetRad)*gamepadHypot;
+
+      // Pull via controller
+      double pullRad = Math.atan2(lateralPullControl, axialPullControl);
+      double pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
+
+      // Finalized calculations
+      double finalRad = targetRad-(((Math.abs(targetRad-pullRad))*(targetRad/Math.abs(targetRad)))*pullStrength);
+      double axial = Math.cos(finalRad)*gamepadHypot;
+      double lateral = Math.sin(finalRad)*gamepadHypot;
 
       // Setting motor powers
       setMovementPower(axial, lateral, yawControl, throttleControl);
