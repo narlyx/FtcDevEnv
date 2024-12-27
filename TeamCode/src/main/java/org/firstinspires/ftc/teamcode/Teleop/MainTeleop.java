@@ -80,7 +80,16 @@ public class MainTeleop extends LinearOpMode {
     Gamepad2 thread2 = new Gamepad2();
 
     // Waiting for drivers to start
-    telemetry.addLine("Robot is ready");
+    telemetry.addLine("Robot is ready for liftoff");
+    telemetry.addLine();
+    telemetry.addLine(">>> Controls for driver 1");
+    telemetry.addData("Axial+Lateral", "Left stick X+Y");
+    telemetry.addData("Yaw", "Right stick X");
+    telemetry.addData("Speed", "Right trigger");
+    telemetry.addData("Reset field centric", "Left bumper");
+    telemetry.addLine();
+    telemetry.addLine(">>> Controls for driver 2");
+    telemetry.addData("Pull direction+strength (manual)", "Left stick X+Y");
     telemetry.update();
     waitForStart();
 
