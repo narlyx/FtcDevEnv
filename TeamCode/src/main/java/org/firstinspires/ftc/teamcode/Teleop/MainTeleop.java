@@ -90,6 +90,16 @@ public class MainTeleop extends LinearOpMode {
 
     // Operations separate from both threads
     while (opModeIsActive()) {
+      telemetry.addLine(">>> Thread Status");
+      telemetry.addData("Gamepad 1", thread1.getState());
+      telemetry.addData("Gamepad 2", thread2.getState());
+      telemetry.addLine();
+      telemetry.addLine(">>> Position");
+      telemetry.addLine(
+          "X: "+robot.odometer.getX()+
+          "Y: "+robot.odometer.getY()+
+          "Z: "+robot.odometer.getZ());
+      telemetry.update();
     }
 
     // Shutting down
