@@ -16,7 +16,7 @@ public class MainTeleop extends LinearOpMode {
   private final Configuration robot = new Configuration(this);
 
   // Public vars
-  public double pullRad = 0, pullStrength = 0;
+  public static double pullRad = 0, pullStrength = 0;
 
   /**
    * Runtime
@@ -26,49 +26,62 @@ public class MainTeleop extends LinearOpMode {
 
     // Class for operations on gamepad 1
     class Gamepad1 extends Thread {
+      private final LinearOpMode opMode;
+      public Gamepad1(LinearOpMode opMode) {
+        this.opMode = opMode;
+      }
+
       @Override
       public void run() {
-        // Controls
-        double axialControl = -gamepad1.left_stick_y;
-        double lateralControl = gamepad1.left_stick_x;
-        double yawControl = gamepad1.right_stick_x;
-        double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
-        boolean fcdReset = gamepad1.left_bumper;
+        while (opMode.opModeIsActive()) {
+          // Controls
+          double axialControl = -gamepad1.left_stick_y;
+          double lateralControl = gamepad1.left_stick_x;
+          double yawControl = gamepad1.right_stick_x;
+          double throttleControl = (gamepad1.right_trigger / 0.8) + 0.2;
+          boolean fcdReset = gamepad1.left_bumper;
 
-        // Field centric yaw reset
-        if (fcdReset) {
-          robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
+          // Field centric yaw reset
+          if (fcdReset) {
+            robot.odometer.resetTo(robot.odometer.getX(), robot.odometer.getY(), 0);
+          }
+
+          // Field centric calculations
+          double gamepadRad = Math.atan2(lateralControl, axialControl);
+          double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
+          double robotRadians = robot.odometer.getZ();
+          double targetRad = gamepadRad - robotRadians;
+
+          // Combining pull
+          double finalRad = targetRad - (((Math.abs(targetRad - pullRad)) * (targetRad / Math.abs(targetRad))) * pullStrength);
+
+          // Final calculations
+          double axial = Math.cos(finalRad) * gamepadHypot;
+          double lateral = Math.sin(finalRad) * gamepadHypot;
+
+          // Sending movement to drivetrain
+          setMovementPower(axial, lateral, yawControl, throttleControl);
         }
-
-        // Field centric calculations
-        double gamepadRad = Math.atan2(lateralControl, axialControl);
-        double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
-        double robotRadians = robot.odometer.getZ();
-        double targetRad = gamepadRad - robotRadians;
-
-        // Combining pull
-        double finalRad = targetRad-(((Math.abs(targetRad-pullRad))*(targetRad/Math.abs(targetRad)))*pullStrength);
-
-        // Final calculations
-        double axial = Math.cos(finalRad)*gamepadHypot;
-        double lateral = Math.sin(finalRad)*gamepadHypot;
-
-        // Sending movement to drivetrain
-        setMovementPower(axial, lateral, yawControl, throttleControl);
       }
     }
 
     // Class for operations on gamepad 2
     class Gamepad2 extends Thread {
+      private final LinearOpMode opMode;
+      public Gamepad2(LinearOpMode opMode) {
+        this.opMode = opMode;
+      }
+
       @Override
       public void run() {
-        // Controls
-        double axialPullControl = -gamepad2.left_stick_y;
-        double lateralPullControl = -gamepad2.left_stick_x;
+        while (opMode.opModeIsActive()) {
+          // Controls
+          double axialPullControl = -gamepad2.left_stick_y;
+          double lateralPullControl = -gamepad2.left_stick_x;
 
-        pullRad = Math.atan2(lateralPullControl, axialPullControl);
-        pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
-
+          pullRad = Math.atan2(lateralPullControl, axialPullControl);
+          pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
+        }
       }
     }
 
@@ -76,8 +89,8 @@ public class MainTeleop extends LinearOpMode {
     robot.init();
 
     // Creating threads
-    Gamepad1 thread1 = new Gamepad1();
-    Gamepad2 thread2 = new Gamepad2();
+    Gamepad1 thread1 = new Gamepad1(this);
+    Gamepad2 thread2 = new Gamepad2(this);
 
     // Waiting for drivers to start
     telemetry.addLine("Robot is ready for liftoff");
