@@ -24,47 +24,6 @@ public class MainTeleop extends LinearOpMode {
   @Override
   public void runOpMode() {
 
-    // Class for operations on gamepad 1
-    class Gamepad1 extends Thread {
-      private final LinearOpMode opMode;
-      public Gamepad1(LinearOpMode opMode) {
-        this.opMode = opMode;
-      }
-
-      @Override
-      public void run() {
-        while (opMode.opModeIsActive()) {
-          // Controls
-          double axialControl = -gamepad1.left_stick_y;
-          double lateralControl = gamepad1.left_stick_x;
-          double yawControl = gamepad1.right_stick_x;
-          double throttleControl = (gamepad1.right_trigger / 0.8) + 0.2;
-          boolean fcdReset = gamepad1.left_bumper;
-
-          // Field centric yaw reset
-          if (fcdReset) {
-            robot.odometer.resetTo(robot.odometer.getX(), robot.odometer.getY(), 0);
-          }
-
-          // Field centric calculations
-          double gamepadRad = Math.atan2(lateralControl, axialControl);
-          double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
-          double robotRadians = robot.odometer.getZ();
-          double targetRad = gamepadRad - robotRadians;
-
-          // Combining pull
-          double finalRad = targetRad - (((Math.abs(targetRad - pullRad)) * (targetRad / Math.abs(targetRad))) * pullStrength);
-
-          // Final calculations
-          double axial = Math.cos(finalRad) * gamepadHypot;
-          double lateral = Math.sin(finalRad) * gamepadHypot;
-
-          // Sending movement to drivetrain
-          setMovementPower(axial, lateral, yawControl, throttleControl);
-        }
-      }
-    }
-
     // Class for operations on gamepad 2
     class Gamepad2 extends Thread {
       private final LinearOpMode opMode;
@@ -79,7 +38,7 @@ public class MainTeleop extends LinearOpMode {
           double axialPullControl = -gamepad2.left_stick_y;
           double lateralPullControl = -gamepad2.left_stick_x;
 
-          pullRad = Math.atan2(lateralPullControl, axialPullControl);
+          pullRad = -Math.atan2(lateralPullControl, axialPullControl);
           pullStrength = Range.clip(Math.hypot(lateralPullControl, axialPullControl), 0, 1);
         }
       }
@@ -89,7 +48,6 @@ public class MainTeleop extends LinearOpMode {
     robot.init();
 
     // Creating threads
-    Gamepad1 thread1 = new Gamepad1(this);
     Gamepad2 thread2 = new Gamepad2(this);
 
     // Waiting for drivers to start
@@ -107,13 +65,41 @@ public class MainTeleop extends LinearOpMode {
     waitForStart();
 
     // Starting threads
-    thread1.start();
     thread2.start();
 
     // Operations separate from both threads
     while (opModeIsActive()) {
+      // Controls
+      double axialControl = -gamepad1.left_stick_y;
+      double lateralControl = gamepad1.left_stick_x;
+      double yawControl = gamepad1.right_stick_x;
+      double throttleControl = (gamepad1.right_trigger / 0.8) + 0.2;
+      boolean fcdReset = gamepad1.left_bumper;
+
+      // Field centric yaw reset
+      if (fcdReset) {
+        robot.odometer.resetTo(robot.odometer.getX(), robot.odometer.getY(), 0);
+      }
+
+      // Field centric calculations
+      double gamepadRad = Math.atan2(lateralControl, axialControl);
+      gamepadRad = gamepadRad - ((Math.abs(gamepadRad - pullRad) * (gamepadRad/Math.abs(gamepadRad))) * pullStrength);
+      double gamepadHypot = Range.clip(Math.hypot(lateralControl, axialControl), 0, 1);
+      double robotRadians = robot.odometer.getZ();
+      double targetRad = gamepadRad - robotRadians;
+
+      // Combining pull
+
+      // Final calculations
+      double axial = Math.cos(targetRad) * gamepadHypot;
+      double lateral = Math.sin(targetRad) * gamepadHypot;
+
+      // Sending movement to drivetrain
+      setMovementPower(axial, lateral, yawControl, throttleControl);
+
+
+      // Telemetry
       telemetry.addLine(">>> Thread Status");
-      telemetry.addData("Gamepad 1", thread1.getState());
       telemetry.addData("Gamepad 2", thread2.getState());
       telemetry.addLine();
       telemetry.addLine(">>> Position");
@@ -121,11 +107,14 @@ public class MainTeleop extends LinearOpMode {
           "X: "+robot.odometer.getX()+
           "Y: "+robot.odometer.getY()+
           "Z: "+robot.odometer.getZ());
+      telemetry.addLine();
+      telemetry.addLine(">>> Pulling");
+      telemetry.addData("Pull Direction Degrees", Math.toDegrees(pullRad));
+      telemetry.addData("Pull Strength", pullStrength);
       telemetry.update();
     }
 
     // Shutting down
-    thread1.interrupt();
     thread2.interrupt();
   }
 
