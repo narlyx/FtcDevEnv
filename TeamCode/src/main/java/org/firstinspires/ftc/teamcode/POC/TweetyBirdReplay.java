@@ -64,7 +64,7 @@ public class TweetyBirdReplay extends LinearOpMode {
           robot.tweetyBird.sendTargetPosition(
                   currentAction.getDouble("x"),
                   currentAction.getDouble("y"),
-                  currentAction.getDouble("z")
+                  Math.toDegrees(currentAction.getDouble("z"))
           );
         }
 
