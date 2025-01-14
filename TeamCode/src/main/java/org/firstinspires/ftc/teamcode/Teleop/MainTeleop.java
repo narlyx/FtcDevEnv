@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode.Teleop;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Configuration;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Entry class
@@ -14,6 +23,10 @@ import org.firstinspires.ftc.teamcode.Configuration;
 public class MainTeleop extends LinearOpMode {
   // Loading robot configuration
   private final Configuration robot = new Configuration(this);
+
+  // Creating json array
+  public JSONObject mainRecord= new JSONObject();
+  public JSONArray recordArray = new JSONArray();
 
   /**
    * Runtime
@@ -28,6 +41,9 @@ public class MainTeleop extends LinearOpMode {
     telemetry.update();
     waitForStart();
 
+    // Debounce values
+    boolean recordDebounce = false;
+
     // Runtime loop
     while (opModeIsActive()) {
       // Controls for gamepad 1
@@ -36,6 +52,8 @@ public class MainTeleop extends LinearOpMode {
       double yawControl = gamepad1.right_stick_x;
       double throttleControl = (gamepad1.right_trigger/0.8)+0.2;
       boolean fcdReset = gamepad1.left_bumper;
+      boolean record = gamepad1.a;
+      boolean recordStop = gamepad1.b;
 
       // Controls for gamepad 2
       double axialPullControl = -gamepad2.left_stick_y;
@@ -64,12 +82,64 @@ public class MainTeleop extends LinearOpMode {
       // Setting motor powers
       setMovementPower(axial, lateral, yawControl, throttleControl);
 
+      // Recording
+      if (record && !recordDebounce) {
+        recordDebounce = true;
+          try {
+              recordPoint();
+          } catch (JSONException e) {
+              throw new RuntimeException(e);
+          }
+      }
+
+      if (recordStop && !recordDebounce) {
+        recordDebounce = true;
+          try {
+              recordStop();
+          } catch (JSONException e) {
+              throw new RuntimeException(e);
+          }
+      }
+
+      if (!record && !recordStop) {
+        recordDebounce = false;
+      }
+
       // Telemetry
       telemetry.addData("X",robot.odometer.getX());
       telemetry.addData("Y",robot.odometer.getY());
       telemetry.addData("Z",robot.odometer.getZ());
       telemetry.update();
     }
+
+    // Writing recording
+    try {
+      mainRecord.put("actions",recordArray);
+      File recordFile = new File(Environment.getExternalStorageDirectory(), "tweetyBirdRecord.json");
+      FileWriter recordWriter = new FileWriter(recordFile);
+      recordWriter.write(mainRecord.toString(2));
+      recordWriter.flush();
+      recordWriter.close();
+    } catch (IOException | JSONException e) {
+      throw new RuntimeException(e);
+    }
+
+  }
+
+  public void recordPoint() throws JSONException {
+    JSONObject newRecord = new JSONObject();
+    newRecord.put("type","waypoint");
+    newRecord.put("x",robot.odometer.getX());
+    newRecord.put("y",robot.odometer.getY());
+    newRecord.put("z",robot.odometer.getZ());
+    recordArray.put(newRecord);
+  }
+
+  public void recordStop() throws JSONException {
+    recordPoint();
+    JSONObject newRecord = new JSONObject();
+    newRecord.put("type","wait");
+    recordArray.put(newRecord);
   }
 
   public void setMovementPower(double axial, double lateral, double yaw, double speed) {
