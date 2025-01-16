@@ -50,6 +50,10 @@ public class HuskyColorTracking extends LinearOpMode {
       Configuration.sampleColors targetColor = null;
 
       for (HuskyLens.Block block : blocks) {
+        if (!opModeIsActive()) {
+          break;
+        }
+
         Configuration.sampleColors color = robot.sampleIds.get(block.id);
 
         double xOffset = (double) (block.x - 160) / 160;
