@@ -4,6 +4,8 @@ import dev.narlyx.tweetybird.Odometers.ThreeWheeled;
 import dev.narlyx.tweetybird.Drivers.Mecanum;
 import dev.narlyx.tweetybird.TweetyBird;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -20,6 +22,7 @@ public class Configuration {
   // Classes
   private LinearOpMode opMode;
   private HardwareMap hwMap;
+  public FtcDashboard ftcDashboard;
 
   // Var
   public enum sampleColors {YELLOW,BLUE,RED};
@@ -38,7 +41,12 @@ public class Configuration {
 
   // Constructor
   public Configuration(LinearOpMode opMode) {
+    // Opmdoe
     this.opMode = opMode;
+
+    // Ftc dashboard
+    ftcDashboard = FtcDashboard.getInstance();
+    opMode.telemetry = new MultipleTelemetry(opMode.telemetry, ftcDashboard.getTelemetry());
   }
 
   // General initialization
