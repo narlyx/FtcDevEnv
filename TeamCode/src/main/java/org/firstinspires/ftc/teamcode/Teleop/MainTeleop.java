@@ -61,7 +61,7 @@ public class MainTeleop extends LinearOpMode {
 
       // Field centric yaw reset
       if (fcdReset) {
-        robot.odometer.resetTo(robot.odometer.getX(),robot.odometer.getY(),0);
+        robot.odometer.resetTo(0,0,0);
       }
 
       // Field centric calculations
