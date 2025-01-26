@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.POC;
+package org.firstinspires.ftc.carl.POC;
 
 import android.os.Environment;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.Configuration;
+import org.firstinspires.ftc.carl.Configuration;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
