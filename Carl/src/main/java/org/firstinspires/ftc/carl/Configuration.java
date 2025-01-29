@@ -90,7 +90,7 @@ public class Configuration {
             RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
     )));*/
 
-    huskyLens = hwMap.get(HuskyLens.class, "huskylens");
+    //huskyLens = hwMap.get(HuskyLens.class, "huskylens");
 
     // TweetyBird classes
     odometer = new ThreeWheeled.Builder()

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.carl.POC;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.carl.Configuration;
 
 @TeleOp(name = "HuskyLens Color Tracking", group = "poc")
+@Disabled
 public class HuskyColorTracking extends LinearOpMode {
   private final Configuration robot = new Configuration(this);
 
